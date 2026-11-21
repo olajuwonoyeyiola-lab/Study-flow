@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0C10">
+<title>STUDYFLOW — Your study life, organised.</title>
+<meta name="description" content="A premium student productivity workspace for tasks, focus sessions, subjects and revision notes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0C10;--side:#0B0E13;--card:#12151B;--card2:#101419;--fg:#F5F2EB;--mute:#8E95A5;--gold:#E5C158;--green:#4EBF86;--red:#E5646E;--line:#262C38;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.5 "Plus Jakarta Sans",system-ui,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+h1,h2,h3{font-weight:600}
+.display,h1{font-family:"Cormorant Garamond",Georgia,serif}
+h1{font-size:2.3rem;font-weight:700;line-height:1.05;margin-top:8px}
+h2{font-size:1.05rem}
+.micro{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.mute{color:var(--mute)} .gold{color:var(--gold)} .sm{font-size:.78rem}
+.fig{font-family:"Cormorant Garamond",serif;font-weight:700;line-height:1}
+.surface{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.quiet{background:var(--card2);border:1px solid var(--line);border-radius:12px}
+.gold-fill{background:linear-gradient(135deg,#F0D27A,#D4A93A);color:#0A0C10;font-weight:600}
+.btn{height:44px;border-radius:10px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:.9rem}
+.btn.line{border:1px solid var(--line);color:var(--mute)} .btn.line:hover{color:var(--fg)}
+.btn:hover{opacity:.9} .full{width:100%}
+.stack>*+*{margin-top:16px} .grid{display:grid;gap:12px}
+.g2{grid-template-columns:1fr 1fr}
+input,select,textarea{width:100%;height:44px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:0 12px;margin-top:6px}
+textarea{height:auto;padding:10px 12px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(229,193,88,.4)}
+.err{color:var(--red);font-size:.72rem;margin-top:4px} .bad{border-color:var(--red)}
+label.micro{display:block;margin-top:12px}
+.pill{border:1px solid;border-radius:99px;padding:2px 8px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.p-high{border-color:rgba(229,193,88,.45);background:rgba(229,193,88,.12);color:var(--gold)}
+.p-medium{border-color:rgba(148,163,184,.35);background:rgba(148,163,184,.1);color:#cbd5e1}
+.p-low{border-color:var(--line);color:var(--mute)}
+.row{display:flex;align-items:center;gap:12px}.between{justify-content:space-between}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:2px;background:rgba(255,255,255,.03)}
+.seg button{padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--gold);color:#0A0C10}
+.check{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);flex:none;display:grid;place-items:center;color:transparent;font-size:.7rem}
+.check:hover{border-color:var(--gold)} .check.on{background:var(--gold);border-color:var(--gold);color:#0A0C10}
+.done{text-decoration:line-through;color:var(--mute)}
+.icon{width:34px;height:34px;border-radius:8px;color:var(--mute)} .icon:hover{background:rgba(255,255,255,.06);color:var(--fg)}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:32px 16px;text-align:center;color:var(--mute);font-size:.85rem}
+.bars{display:flex;align-items:flex-end;gap:10px}
+.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bar{border-radius:3px 3px 0 0;background:rgba(255,255,255,.07)}.bar.has{background:linear-gradient(180deg,#F0D27A,#B8902B)}
+.days{display:flex;gap:10px;margin-top:8px}.days span{flex:1;text-align:center;font-size:.65rem;text-transform:uppercase;color:var(--mute)}.days .today{color:var(--gold);font-weight:700}
+.track{height:6px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:8px}.track>i{display:block;height:100%;border-radius:99px;transition:width .7s}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.swatch{width:32px;height:32px;border-radius:50%;border:2px solid transparent}.swatch.on{border-color:var(--fg);transform:scale(1.06)}
+/* layout */
+aside{display:none}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 110px}
+nav.bottom{position:fixed;inset:auto 0 0;background:rgba(11,14,19,.95);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav.bottom a,nav.bottom button{min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.65rem;color:var(--mute);text-decoration:none}
+nav.bottom .on{color:var(--gold)} nav.bottom b{font-size:1.1rem;font-weight:400}
+#more{position:fixed;right:12px;bottom:70px;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;display:none;min-width:190px}
+#more.open{display:block}
+#more a,#more button{display:block;width:100%;text-align:left;padding:11px 12px;border-radius:8px;font-size:.88rem;color:var(--fg);text-decoration:none}
+#more a:hover,#more button:hover{background:rgba(255,255,255,.05)}
+.cols{display:grid;gap:16px}
+@media(min-width:1024px){
+ aside{display:flex;position:fixed;inset:0 auto 0 0;width:240px;background:var(--side);border-right:1px solid var(--line);flex-direction:column;z-index:10}
+ aside .brand{padding:28px 24px 24px} aside nav{flex:1;padding:0 12px}
+ aside a,aside button{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:10px;color:var(--mute);font-size:.88rem;text-decoration:none;margin-bottom:4px}
+ aside a:hover,aside button:hover{background:rgba(255,255,255,.04);color:var(--fg)} aside a.on{background:rgba(229,193,88,.1);color:var(--gold)}
+ aside .foot{border-top:1px solid var(--line);padding:16px 12px}
+ .wrap{padding-left:240px} main{padding:40px 40px 64px} nav.bottom{display:none}
+ .m4{grid-template-columns:repeat(4,1fr)} .c-dash{grid-template-columns:1.85fr 1fr;align-items:start}
+ .c-focus{grid-template-columns:1.5fr 1fr;align-items:start}.c-sub{grid-template-columns:1fr 2fr;align-items:start}
+ .c-notes{grid-template-columns:1fr 1.6fr;align-items:start}.c-prog{grid-template-columns:1.35fr 1fr;align-items:start}
+}
+@media(min-width:640px){.sub-grid{grid-template-columns:1fr 1fr}}
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(520px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.65)}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;align-items:center}
+.t{background:#1A1F28;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.85rem;display:flex;gap:14px;align-items:center}
+.t button{color:var(--gold);font-weight:600}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.rise{animation:rise .5s ease both}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="toast"></div><dialog id="dlg"></dialog>
+<script>
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
+const uid = () => Math.random().toString(36).slice(2, 10);
+const FOCUS = 25 * 60000, BREAK = 5 * 60000, GOAL = 600;
+const COLORS = ["#E5C158", "#6EA8FE", "#C084FC", "#4EBF86", "#F2828C", "#F5A25D"];
+const fmtMin = m => m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`;
+const fmtClock = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; };
+const fmtDue = d => {
+  if (!d) return "No date";
+  const diff = Math.round((new Date(d + "T00:00") - new Date(iso(new Date()) + "T00:00")) / 864e5);
+  if (diff === 0) return "Today"; if (diff === 1) return "Tomorrow"; if (diff === -1) return "Yesterday";
+  if (diff < 0) return `${-diff}d ago`;
+  return new Date(d + "T00:00").toLocaleDateString("en", { weekday: "short", day: "numeric", month: "short" });
+};
+const timeAgo = ts => {
+  const m = Math.round((Date.now() - new Date(ts)) / 60000);
+  if (m < 1) return "just now"; if (m < 60) return `${m}m ago`;
+  if (m < 1440) return `${Math.round(m / 60)}h ago`; return `${Math.round(m / 1440)}d ago`;
+};
+const greeting = h => h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+
+/* ---------- data ---------- */
+const KEY = "studyflow.v1";
+function seed() {
+  const at = (d, h) => { const x = addDays(-d); x.setHours(h, 0, 0, 0); return x.toISOString(); };
+  const subjects = ["Mathematics", "Physics", "Literature", "Chemistry"].map((name, i) => ({ id: uid(), name, color: COLORS[i] }));
+  const t = (title, subject, priority, due, minutes, completed = false) =>
+    ({ id: uid(), title, subject, priority, dueDate: iso(addDays(due)), minutes, completed, completedAt: completed ? at(Math.max(0, -due), 17) : null });
+  return {
+    subjects,
+    tasks: [
+      t("Finish problem set 4", "Mathematics", "high", 0, 60),
+      t("Read chapters 3–4", "Literature", "medium", 1, 45),
+      t("Lab report draft", "Chemistry", "high", 2, 90),
+      t("Revise kinematics formulas", "Physics", "low", 3, 30),
+      t("Past paper — calculus", "Mathematics", "medium", -1, 60, true),
+    ],
+    sessions: [[0, "Mathematics", 25, 9], [0, "Physics", 25, 11], [1, "Literature", 50, 16], [2, "Chemistry", 25, 14],
+               [3, "Mathematics", 75, 10], [5, "Physics", 50, 18], [8, "Literature", 25, 13]]
+      .map(([d, subject, minutes, h]) => ({ id: uid(), subject, minutes, completedAt: at(d, h) })),
+    notes: [
+      { id: uid(), title: "Integration by parts", subject: "Mathematics", body: "∫u dv = uv − ∫v du\nPick u with LIATE.", createdAt: at(1, 15) },
+      { id: uid(), title: "Newton's second law", subject: "Physics", body: "F = ma. Net force, not any single force.", createdAt: at(2, 12) },
+    ],
+  };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch { S = null; }
+if (!S) S = seed();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+const T = { mode: "focus", subject: "", remaining: FOCUS, running: false, endAt: 0 };
+const ui = { filter: "all", sort: "due" };
+
+function stats() {
+  const { tasks, sessions, subjects } = S;
+  const done = tasks.filter(x => x.completed);
+  const day = ts => iso(new Date(ts));
+  const weekly = [...Array(7)].map((_, i) => {
+    const d = addDays(i - 6), k = iso(d);
+    return {
+      iso: k, weekday: d.toLocaleDateString("en", { weekday: "short" }), isToday: i === 6,
+      minutes: sessions.filter(x => day(x.completedAt) === k).reduce((a, x) => a + x.minutes, 0),
+      completed: done.filter(x => x.completedAt && day(x.completedAt) === k).length,
+    };
+  });
+  const prevKeys = [...Array(7)].map((_, i) => iso(addDays(i - 13)));
+  const weekMinutes = weekly.reduce((a, x) => a + x.minutes, 0);
+  const prevMinutes = sessions.filter(x => prevKeys.includes(day(x.completedAt))).reduce((a, x) => a + x.minutes, 0);
+  const todays = tasks.filter(x => x.dueDate === iso(new Date()));
+  const todayDone = todays.filter(x => x.completed).length;
+  const best = weekly.reduce((b, x) => x.minutes > b.minutes ? x : b, weekly[0]);
+  return {
+    totalTasks: tasks.length, completedTasks: done.length, pendingTasks: tasks.length - done.length,
+    completionRate: tasks.length ? Math.round(done.length / tasks.length * 100) : 0,
+    totalMinutes: sessions.reduce((a, x) => a + x.minutes, 0), sessionsCount: sessions.length,
+    weekly, weekMinutes, weekSessions: sessions.filter(x => weekly.some(w => w.iso === day(x.completedAt))).length,
+    weekCompleted: weekly.reduce((a, x) => a + x.completed, 0),
+    weekDeltaPct: prevMinutes ? Math.round((weekMinutes - prevMinutes) / prevMinutes * 100) : weekMinutes ? 100 : 0,
+    todayMinutes: weekly[6].minutes, todayTotal: todays.length, todayDone,
+    dailyProgress: todays.length ? Math.round(todayDone / todays.length * 100) : 0,
+    bestDay: best.minutes ? best : { weekday: "—", minutes: 0 },
+    subjectCount: subjects.length, notesCount: S.notes.length,
+    subjectTotals: subjects.map(s => {
+      const list = sessions.filter(x => x.subject === s.name);
+      return { ...s, minutes: list.reduce((a, x) => a + x.minutes, 0), sessions: list.length };
+    }),
+  };
+}
+
+/* ---------- small UI pieces ---------- */
+const metric = (label, value, hint) => `<div class="surface"><span class="micro">${label}</span>
+  <p class="fig" style="font-size:1.9rem;margin-top:10px">${value}</p>${hint ? `<p class="sm mute" style="margin-top:4px">${hint}</p>` : ""}</div>`;
+const pill = p => `<span class="pill p-${p}">${p}</span>`;
+const colorOf = name => (S.subjects.find(s => s.name === name) || {}).color || "#8E95A5";
+const subjectOptions = (sel) => ["General study", ...S.subjects.map(s => s.name)]
+  .map(n => `<option ${n === sel ? "selected" : ""}>${esc(n)}</option>`).join("");
+function bars(data, key = "minutes", h = 104) {
+  const max = Math.max(...data.map(d => d[key]), 1), total = data.reduce((a, d) => a + d[key], 0);
+  return `<div class="bars" style="height:${h}px" role="img" aria-label="Last 7 days">${data.map(d =>
+    `<div><div class="bar ${d[key] ? "has" : ""}" style="height:${total ? Math.max(6, Math.round(d[key] / max * 100)) : 6}%" title="${d.weekday}: ${d[key]}"></div></div>`).join("")}</div>
+    <div class="days">${data.map(d => `<span class="${d.isToday ? "today" : ""}">${d.weekday[0]}</span>`).join("")}</div>`;
+}
+const R = 84, C = 2 * Math.PI * R;
+function timerCard(big) {
+  const focus = T.mode === "focus", total = focus ? FOCUS : BREAK;
+  const col = focus ? "#E5C158" : "#4EBF86";
+  return `<section class="surface" style="padding:${big ? 24 : 16}px"><div class="row between" style="margin-bottom:16px">
+    <h2>Focus timer</h2>
+    <div class="seg">${["focus", "break"].map(m => `<button class="${T.mode === m ? "on" : ""}" data-act="mode" data-v="${m}">${m === "focus" ? "Focus" : "Break"}</button>`).join("")}</div></div>
+    <div style="max-width:${big ? 300 : 230}px;margin:0 auto;position:relative;aspect-ratio:1">
+      <svg viewBox="0 0 200 200" style="width:100%;transform:rotate(-90deg)"><circle cx="100" cy="100" r="${R}" fill="none" stroke="rgba(245,242,235,.08)" stroke-width="7"/>
+      <circle data-ring cx="100" cy="100" r="${R}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (T.remaining / total)}"/></svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <span class="micro" style="color:${col}">${focus ? "Focus session" : "Short break"}</span>
+        <p data-clock class="fig" style="font-size:${big ? 3.4 : 2.6}rem;margin-top:8px">${fmtClock(T.remaining)}</p>
+        <p class="sm mute">${focus ? esc(T.subject || "General study") : "Step away and reset"}</p></div></div>
+    <label class="micro" for="tsub">Session subject</label>
+    <select id="tsub" data-act="tsub">${subjectOptions(T.subject || "General study")}</select>
+    <div class="row" style="margin-top:16px"><button class="btn gold-fill" style="flex:1" data-act="${T.running ? "pause" : "start"}">${T.running ? "❚❚ Pause" : T.remaining < total ? "▶ Resume" : "▶ Start"}</button>
+    <button class="btn line" data-act="reset">↺ Reset</button></div></section>`;
+}
+function taskRow(t, full) {
+  const overdue = !t.completed && t.dueDate && fmtDue(t.dueDate).includes("ago");
+  return `<li class="${full ? "quiet" : ""} row" style="padding:${full ? "12px 14px" : "10px 4px"}">
+    <button class="check ${t.completed ? "on" : ""}" data-act="toggle" data-id="${t.id}" aria-label="Toggle ${esc(t.title)}">✓</button>
+    <div style="flex:1;min-width:0"><p class="${t.completed ? "done" : ""}" style="font-size:.9rem">${esc(t.title)}</p>
+    <p class="sm mute">${esc(t.subject)} · ${t.minutes} min · <span style="color:${overdue ? "var(--red)" : "inherit"}">${fmtDue(t.dueDate)}</span></p></div>
+    ${pill(t.priority)}
+    ${full ? `<button class="icon" data-act="edit" data-id="${t.id}" aria-label="Edit">✎</button><button class="icon" data-act="del" data-id="${t.id}" aria-label="Delete">🗑</button>` : ""}</li>`;
+}
+const noteCard = n => `<article class="surface"><div class="row between" style="align-items:flex-start"><div><h3 style="font-size:.95rem">${esc(n.title)}</h3>
+  <p class="micro" style="margin-top:4px"><i class="dot" style="background:${colorOf(n.subject)};width:6px;height:6px"></i> ${esc(n.subject)} · <span style="text-transform:none;letter-spacing:0">${timeAgo(n.createdAt)}</span></p></div>
+  <button class="icon" data-act="delnote" data-id="${n.id}" aria-label="Delete note">🗑</button></div>
+  <p class="mute" style="margin-top:10px;white-space:pre-line;font-size:.85rem">${esc(n.body)}</p></article>`;
+
+/* ---------- pages ---------- */
+const head = (label, title, sub) => `<header class="rise"><p class="micro">${label}</p><h1>${title}</h1><p class="mute" style="margin-top:8px;max-width:560px;font-size:.9rem">${sub}</p></header>`;
+const pages = {
+  "": () => {
+    const s = stats();
+    const up = S.tasks.filter(t => !t.completed).sort((a, b) => (a.dueDate || "9").localeCompare(b.dueDate || "9")).slice(0, 5);
+    return `<div class="stack"><header class="rise"><p class="micro">${new Date().toLocaleDateString("en", { weekday: "long", day: "numeric", month: "long" })}</p>
+      <h1>${greeting(new Date().getHours())}, <span class="gold">scholar</span></h1>
+      <div class="surface" style="margin-top:20px"><div class="row between"><div><p class="micro">Today's progress</p><p class="sm mute" style="margin-top:4px">${s.todayTotal ? `${s.todayDone} of ${s.todayTotal} tasks due today complete` : "No tasks due today — a good day to get ahead."}</p></div>
+      <p class="fig gold" style="font-size:1.9rem">${s.dailyProgress}%</p></div><div class="track"><i class="gold-fill" style="width:${Math.max(s.dailyProgress, 2)}%"></i></div></div></header>
+      <div class="grid g2 m4">${metric("Total tasks", s.totalTasks, `${s.pendingTasks} still pending`)}${metric("Completed", s.completedTasks, `${s.completionRate}% completion rate`)}
+      ${metric("Study time", fmtMin(s.totalMinutes), `${s.sessionsCount} focus sessions`)}${metric("Subjects", s.subjectCount, `${s.notesCount} revision notes`)}</div>
+      <div class="cols c-dash"><div class="stack">${timerCard(false)}
+        <section class="surface"><div class="row between"><div><h2>Weekly activity</h2><p class="sm mute">${fmtMin(s.weekMinutes)} studied across ${s.weekSessions} sessions</p></div><a href="#progress" class="sm gold" style="text-decoration:none">Details</a></div><div style="margin-top:16px">${bars(s.weekly)}</div></section>
+        <section class="surface"><div class="row between"><h2>Upcoming tasks</h2><a href="#tasks" class="sm gold" style="text-decoration:none">All tasks</a></div>
+        ${up.length ? `<ul style="list-style:none;padding:0;margin-top:8px">${up.map(t => taskRow(t, false)).join("")}</ul>` : `<div class="empty" style="margin-top:12px">Nothing pending — nicely done.</div>`}</section></div>
+      <div class="stack"><form class="surface" data-form="quick" novalidate><h2>Quick task</h2><p class="sm mute">Capture it before it slips.</p>
+        <input name="title" placeholder="e.g. Revise chapter 4 notes" aria-label="Task title"><p class="err" hidden></p>
+        <div class="grid g2" style="margin-top:10px"><select name="subject" style="margin:0">${subjectOptions("")}</select>
+        <select name="priority" style="margin:0"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div>
+        <button class="btn gold-fill full" style="margin-top:10px">＋ Add task</button></form>
+        <section class="surface"><div class="row between"><h2>Quick notes</h2><a href="#notes" class="sm gold" style="text-decoration:none">All notes</a></div>
+        ${S.notes.slice(0, 2).map(n => `<div class="quiet" style="padding:12px;margin-top:10px"><p style="font-size:.85rem;font-weight:600">${esc(n.title)}</p><p class="micro gold" style="margin-top:2px">${esc(n.subject)}</p><p class="sm mute" style="margin-top:6px">${esc(n.body)}</p></div>`).join("") || `<div class="empty" style="margin-top:12px">No revision notes yet.</div>`}</section></div></div></div>`;
+  },
+  tasks: () => {
+    const cnt = { all: S.tasks.length, pending: S.tasks.filter(t => !t.completed).length, completed: S.tasks.filter(t => t.completed).length };
+    const rank = { high: 0, medium: 1, low: 2 };
+    const list = S.tasks.filter(t => ui.filter === "pending" ? !t.completed : ui.filter === "completed" ? t.completed : true)
+      .sort((a, b) => ui.sort === "priority" ? rank[a.priority] - rank[b.priority] : (a.dueDate || "9999").localeCompare(b.dueDate || "9999"));
+    return `<div class="stack"><header class="row between rise" style="align-items:flex-end;flex-wrap:wrap"><div><p class="micro">Task manager</p><h1>Your tasks</h1>
+      <p class="sm mute" style="margin-top:8px">${cnt.pending} pending · ${cnt.completed} completed</p></div><button class="btn gold-fill" data-act="newtask">＋ New task</button></header>
+      <div class="row between" style="flex-wrap:wrap"><div class="seg">${["all", "pending", "completed"].map(f => `<button class="${ui.filter === f ? "on" : ""}" data-act="filter" data-v="${f}">${f[0].toUpperCase() + f.slice(1)} <span style="opacity:.7">${cnt[f]}</span></button>`).join("")}</div>
+      <label class="row sm mute">Sort <select data-act="sort" style="width:auto;height:36px;margin:0"><option value="due" ${ui.sort === "due" ? "selected" : ""}>Due date</option><option value="priority" ${ui.sort === "priority" ? "selected" : ""}>Priority</option></select></label></div>
+      ${list.length ? `<ul style="list-style:none;padding:0" class="stack" >${list.map(t => taskRow(t, true)).join("")}</ul>` : `<div class="empty">${ui.filter === "completed" ? "No completed tasks yet." : ui.filter === "pending" ? "Nothing pending — your queue is clear." : "No tasks yet."}</div>`}</div>`;
+  },
+  focus: () => {
+    const s = stats();
+    const recent = [...S.sessions].sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt)).slice(0, 8);
+    return `<div class="stack">${head("Focus timer", "One session at a time", "Twenty-five minutes of deliberate work, then five minutes to reset. Completed sessions count towards your subjects and weekly activity.")}
+      <div class="grid g2 m4">${metric("Today", fmtMin(s.todayMinutes), "Study time logged")}${metric("This week", fmtMin(s.weekMinutes), `${s.weekSessions} sessions`)}
+      ${metric("All time", fmtMin(s.totalMinutes), `${s.sessionsCount} sessions`)}${metric("Best day", s.bestDay.weekday, `${fmtMin(s.bestDay.minutes)} studied`)}</div>
+      <div class="cols c-focus">${timerCard(true)}<section class="surface"><div class="row between"><h2>Session log</h2><span class="sm mute">${S.sessions.length} total</span></div>
+      ${recent.length ? `<ul style="list-style:none;padding:0;margin-top:8px">${recent.map(x => `<li class="row" style="padding:10px 4px"><i class="dot" style="background:${colorOf(x.subject)}"></i><span style="flex:1;font-size:.85rem">${esc(x.subject || "General study")}</span><span class="sm gold">${fmtMin(x.minutes)}</span><span class="sm mute" style="width:64px;text-align:right">${timeAgo(x.completedAt)}</span></li>`).join("")}</ul>` : `<div class="empty" style="margin-top:12px">Completed focus sessions will be logged here.</div>`}</section></div></div>`;
+  },
+  subjects: () => {
+    const s = stats();
+    return `<div class="stack">${head("Subjects", "What you're studying", "Study totals update automatically every time a focus session is completed.")}
+      <div class="cols c-sub"><form class="surface" data-form="subject" novalidate><h2>Add a subject</h2><p class="sm mute">Give it a colour so sessions and tasks stay recognisable.</p>
+      <label class="micro" for="sname">Subject name</label><input id="sname" name="name" placeholder="e.g. Organic Chemistry"><p class="err" hidden></p>
+      <label class="micro">Colour</label><div class="row" style="flex-wrap:wrap;margin-top:8px">${COLORS.map((c, i) => `<button type="button" class="swatch ${i ? "" : "on"}" data-act="swatch" data-v="${c}" style="background:${c}" aria-label="Colour ${c}"></button>`).join("")}</div>
+      <input type="hidden" name="color" value="${COLORS[0]}"><button class="btn gold-fill full" style="margin-top:16px">＋ Add subject</button></form>
+      <div>${S.subjects.length ? `<div class="grid sub-grid">${S.subjects.map(sub => {
+        const tt = s.subjectTotals.find(x => x.id === sub.id), open = S.tasks.filter(t => t.subject === sub.name && !t.completed).length;
+        return `<article class="surface"><div class="row between"><div class="row"><i class="dot" style="background:${sub.color};width:12px;height:12px"></i><h3 style="font-size:.95rem">${esc(sub.name)}</h3></div><button class="icon" data-act="delsub" data-id="${sub.id}" aria-label="Remove ${esc(sub.name)}">🗑</button></div>
+        <p class="fig" style="font-size:1.6rem;margin-top:12px">${fmtMin(tt.minutes)}</p><p class="sm mute">total study time</p>
+        <div class="row between sm mute" style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px"><span>⏱ ${tt.sessions} ${tt.sessions === 1 ? "session" : "sessions"}</span><span>${open} open ${open === 1 ? "task" : "tasks"}</span></div></article>`;
+      }).join("")}</div>` : `<div class="empty">No subjects yet. Add your first one.</div>`}</div></div></div>`;
+  },
+  notes: () => `<div class="stack">${head("Quick notes", "Revision notes", S.notes.length ? `${S.notes.length} note${S.notes.length === 1 ? "" : "s"} saved across your subjects.` : "Keep the formulas, definitions and quotations you keep forgetting.")}
+    <div class="cols c-notes"><form class="surface" data-form="note" novalidate><h2>New revision note</h2><p class="sm mute">Capture the idea while it's fresh.</p>
+    <label class="micro" for="ntitle">Title</label><input id="ntitle" name="title" placeholder="e.g. Integration by parts"><p class="err" data-for="title" hidden></p>
+    <label class="micro" for="nsub">Subject</label><select id="nsub" name="subject">${subjectOptions("")}</select>
+    <label class="micro" for="nbody">Note</label><textarea id="nbody" name="body" rows="5" placeholder="The formula, the definition, the quotation…"></textarea><p class="err" data-for="body" hidden></p>
+    <button class="btn gold-fill full" style="margin-top:16px">Save note</button></form>
+    <div>${S.notes.length ? `<div class="grid sub-grid">${S.notes.map(noteCard).join("")}</div>` : `<div class="empty">No notes yet. Save your first revision note.</div>`}</div></div></div>`,
+  progress: () => {
+    const s = stats(), rows = [...s.subjectTotals].sort((a, b) => b.minutes - a.minutes), max = Math.max(...rows.map(r => r.minutes), 1);
+    return `<div class="stack">${head("Progress", "How the week is going", "Every figure below is calculated from your saved tasks and focus sessions.")}
+      <div class="grid g2 m4">${metric("Completion rate", s.completionRate + "%", `${s.completedTasks} of ${s.totalTasks} tasks`)}${metric("Total focus time", fmtMin(s.totalMinutes), `${s.sessionsCount} sessions logged`)}
+      ${metric("This week", fmtMin(s.weekMinutes), `${s.weekDeltaPct >= 0 ? "+" : ""}${s.weekDeltaPct}% vs last week`)}${metric("Best day", s.bestDay.weekday, `${fmtMin(s.bestDay.minutes)} studied`)}</div>
+      <div class="cols c-prog"><section class="surface"><div class="row between"><div><h2>Weekly study activity</h2><p class="sm mute">Minutes studied each day, last 7 days</p></div><span class="fig gold" style="font-size:1.6rem">${fmtMin(s.weekMinutes)}</span></div>
+      <div style="margin-top:16px">${bars(s.weekly, "minutes", 150)}</div>
+      <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:12px"><div class="row between sm mute"><span>Tasks completed this week</span><span style="color:var(--fg)">${s.weekCompleted}</span></div><div style="margin-top:8px">${bars(s.weekly, "completed", 70)}</div></div></section>
+      <section class="surface"><h2>Study time by subject</h2><p class="sm mute">Calculated from your completed focus sessions.</p>
+      ${rows.length ? `<ul style="list-style:none;padding:0;margin-top:16px" class="stack">${rows.map(r => `<li><div class="row between"><span class="row"><i class="dot" style="background:${r.color}"></i><span style="font-size:.85rem">${esc(r.name)}</span></span><span class="sm mute">${fmtMin(r.minutes)}</span></div><div class="track"><i style="width:${Math.max(3, Math.round(r.minutes / max * 100))}%;background:${r.color}"></i></div></li>`).join("")}</ul>` : `<div class="empty" style="margin-top:12px">Add subjects and complete a focus session.</div>`}</section></div></div>`;
+  },
+};
+
+/* ---------- shell + render ---------- */
+const NAV = [["", "Dashboard", "▦"], ["tasks", "Tasks", "☑"], ["focus", "Focus timer", "◔"], ["subjects", "Subjects", "▤"], ["notes", "Notes", "✎"], ["progress", "Progress", "↗"]];
+const route = () => { const r = location.hash.slice(1); return r in pages ? r : ""; };
+function render() {
+  const r = route();
+  $("#app").innerHTML = `<aside><div class="brand"><span class="display" style="font-size:1.6rem;font-weight:700;letter-spacing:.16em">STUDYFLOW</span><p class="sm mute" style="margin-top:4px">Your study life, organised.</p></div>
+    <nav>${NAV.map(([h, l, i]) => `<a href="#${h}" class="${h === r ? "on" : ""}">${i} ${l}</a>`).join("")}</nav>
+    <div class="foot"><button data-act="resetdemo">↺ Reset demo data</button></div></aside>
+    <div class="wrap"><main>${pages[r]()}</main></div>
+    <nav class="bottom">${NAV.filter(n => ["", "tasks", "focus", "notes"].includes(n[0])).map(([h, l, i]) => `<a href="#${h}" class="${h === r ? "on" : ""}"><b>${i}</b>${l.split(" ")[0]}</a>`).join("")}
+    <button data-act="more"><b>⋯</b>More</button></nav>
+    <div id="more"><a href="#subjects">▤ Subjects</a><a href="#progress">↗ Progress</a><button data-act="resetdemo">↺ Reset demo data</button></div>`;
+}
+function toast(msg, undo) {
+  const el = document.createElement("div"); el.className = "t"; el.textContent = msg;
+  if (undo) { const b = document.createElement("button"); b.textContent = "Undo"; b.onclick = () => { undo(); el.remove(); }; el.append(b); }
+  $("#toast").append(el); setTimeout(() => el.remove(), 5000);
+}
+const commit = () => { save(); render(); };
+
+/* ---------- timer ---------- */
+function tick() {
+  if (!T.running) return;
+  T.remaining = T.endAt - Date.now();
+  if (T.remaining <= 0) {
+    if (T.mode === "focus") {
+      S.sessions.push({ id: uid(), subject: T.subject, minutes: 25, completedAt: new Date().toISOString() });
+      toast("Focus session complete — 25 minutes logged");
+    } else toast("Break over — ready for the next session");
+    T.running = false; T.remaining = T.mode === "focus" ? FOCUS : BREAK; commit(); return;
+  }
+  const total = T.mode === "focus" ? FOCUS : BREAK;
+  document.querySelectorAll("[data-clock]").forEach(e => e.textContent = fmtClock(T.remaining));
+  document.querySelectorAll("[data-ring]").forEach(e => e.setAttribute("stroke-dashoffset", C * (T.remaining / total)));
+}
+setInterval(tick, 250);
+
+/* ---------- task dialog ---------- */
+function openTask(id) {
+  const t = S.tasks.find(x => x.id === id) || { title: "", subject: S.subjects[0]?.name || "General study", priority: "medium", dueDate: iso(new Date()), minutes: 30 };
+  const d = $("#dlg");
+  d.innerHTML = `<form data-form="task" data-id="${id || ""}" novalidate><h2 style="font-size:1.15rem">${id ? "Edit task" : "New task"}</h2>
+    <p class="sm mute">${id ? "Update the details for this task." : "Plan a focused piece of study."}</p>
+    <label class="micro" for="tt">Task title</label><input id="tt" name="title" value="${esc(t.title)}" placeholder="e.g. Finish problem set 4"><p class="err" data-for="title" hidden></p>
+    <div class="grid g2"><div><label class="micro">Subject</label><select name="subject">${subjectOptions(t.subject)}</select></div>
+    <div><label class="micro">Priority</label><select name="priority">${["high", "medium", "low"].map(p => `<option value="${p}" ${t.priority === p ? "selected" : ""}>${p[0].toUpperCase() + p.slice(1)}</option>`).join("")}</select></div>
+    <div><label class="micro">Due date</label><input type="date" name="dueDate" value="${t.dueDate || ""}"><p class="err" data-for="dueDate" hidden></p></div>
+    <div><label class="micro">Estimated minutes</label><input type="number" name="minutes" min="5" step="5" value="${t.minutes}"><p class="err" data-for="minutes" hidden></p></div></div>
+    <div class="row" style="margin-top:18px"><button class="btn gold-fill" style="flex:1">${id ? "Save changes" : "Add task"}</button><button type="button" class="btn line" data-act="closedlg">Cancel</button></div></form>`;
+  d.showModal();
+}
+function showErrors(form, errs) {
+  form.querySelectorAll(".err").forEach(e => { e.hidden = true; });
+  for (const [k, msg] of Object.entries(errs)) {
+    const e = form.querySelector(`.err[data-for="${k}"]`) || form.querySelector(".err");
+    if (e) { e.textContent = msg; e.hidden = false; }
+  }
+  return Object.keys(errs).length === 0;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) { $("#more")?.classList.remove("open"); return; }
+  const { act, id, v } = el.dataset, find = (arr) => arr.find(x => x.id === id);
+  if (act === "more") { e.stopPropagation(); return $("#more").classList.toggle("open"); }
+  const total = T.mode === "focus" ? FOCUS : BREAK;
+  const actions = {
+    toggle: () => { const t = find(S.tasks); t.completed = !t.completed; t.completedAt = t.completed ? new Date().toISOString() : null; commit(); },
+    edit: () => openTask(id),
+    newtask: () => openTask(),
+    closedlg: () => $("#dlg").close(),
+    del: () => { const t = find(S.tasks); S.tasks = S.tasks.filter(x => x.id !== id); commit(); toast("Task deleted", () => { S.tasks.push(t); commit(); }); },
+    filter: () => { ui.filter = v; render(); },
+    mode: () => { T.mode = v; T.running = false; T.remaining = v === "focus" ? FOCUS : BREAK; render(); },
+    start: () => { T.running = true; T.endAt = Date.now() + T.remaining; render(); },
+    pause: () => { T.remaining = T.endAt - Date.now(); T.running = false; render(); },
+    reset: () => { T.running = false; T.remaining = total; render(); },
+    swatch: () => { el.closest("form").color.value = v; el.parentElement.querySelectorAll(".swatch").forEach(s => s.classList.toggle("on", s === el)); },
+    delsub: () => { const s = find(S.subjects); S.subjects = S.subjects.filter(x => x.id !== id); commit(); toast("Subject removed", () => { S.subjects.push(s); commit(); }); },
+    delnote: () => { const n = find(S.notes); S.notes = S.notes.filter(x => x.id !== id); commit(); toast("Note deleted", () => { S.notes.unshift(n); commit(); }); },
+    resetdemo: () => { if (confirm("Reset all data back to the demo set?")) { S = seed(); T.running = false; T.remaining = FOCUS; T.mode = "focus"; commit(); toast("Demo data restored"); } },
+  };
+  actions[act]?.();
+});
+document.addEventListener("change", e => {
+  const a = e.target.dataset.act;
+  if (a === "sort") { ui.sort = e.target.value; render(); }
+  if (a === "tsub") T.subject = e.target.value === "General study" ? "" : e.target.value;
+});
+document.addEventListener("submit", e => {
+  const form = e.target, kind = form.dataset.form; if (!kind) return;
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(form));
+  if (kind === "task") {
+    const errs = {}, minutes = Number(f.minutes);
+    if (!f.title.trim()) errs.title = "A title is required.";
+    if (!f.dueDate) errs.dueDate = "Pick a due date.";
+    if (!(minutes > 0)) errs.minutes = "Enter minutes above zero.";
+    if (!showErrors(form, errs)) return;
+    const data = { title: f.title.trim(), subject: f.subject, priority: f.priority, dueDate: f.dueDate, minutes: Math.round(minutes) };
+    const id = form.dataset.id;
+    if (id) { Object.assign(S.tasks.find(t => t.id === id), data); toast("Task updated"); }
+    else { S.tasks.push({ id: uid(), completed: false, completedAt: null, ...data }); toast("Task added"); }
+    $("#dlg").close(); commit();
+  } else if (kind === "quick") {
+    if (!f.title.trim()) return showErrors(form, { title: "Give the task a title first." });
+    S.tasks.push({ id: uid(), title: f.title.trim(), subject: f.subject || S.subjects[0]?.name || "General study", priority: f.priority, dueDate: iso(new Date()), minutes: 25, completed: false, completedAt: null });
+    commit(); toast("Task added to today");
+  } else if (kind === "subject") {
+    const name = f.name.trim();
+    if (!name) return showErrors(form, { name: "Name your subject first." });
+    if (S.subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) return showErrors(form, { name: "That subject already exists." });
+    S.subjects.push({ id: uid(), name, color: f.color }); commit(); toast(`${name} added`);
+  } else if (kind === "note") {
+    const errs = {};
+    if (!f.title.trim()) errs.title = "Add a title.";
+    if (!f.body.trim()) errs.body = "Write something worth revising.";
+    if (!showErrors(form, errs)) return;
+    S.notes.unshift({ id: uid(), title: f.title.trim(), subject: f.subject, body: f.body.trim(), createdAt: new Date().toISOString() });
+    commit(); toast("Note saved");
+  }
+});
+window.addEventListener("hashchange", () => { render(); scrollTo(0, 0); });
+render();
+</script>
+</body>
+</html>
